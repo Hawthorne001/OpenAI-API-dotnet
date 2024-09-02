@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OpenAI_API.Files
@@ -13,7 +9,7 @@ namespace OpenAI_API.Files
 	/// <summary>
 	/// The API endpoint for operations List, Upload, Delete, Retrieve files
 	/// </summary>
-	public class FilesEndpoint : EndpointBase
+	public class FilesEndpoint : EndpointBase, IFilesEndpoint
 	{
 		/// <summary>
 		/// Constructor of the api endpoint.  Rather than instantiating this yourself, access it through an instance of <see cref="OpenAIAPI"/> as <see cref="OpenAIAPI.Files"/>.
@@ -22,7 +18,7 @@ namespace OpenAI_API.Files
 		internal FilesEndpoint(OpenAIAPI api) : base(api) { }
 
 		/// <summary>
-		/// The name of the enpoint, which is the final path segment in the API URL.  For example, "files".
+		/// The name of the endpoint, which is the final path segment in the API URL.  For example, "files".
 		/// </summary>
 		protected override string Endpoint { get { return "files"; } }
 
@@ -54,7 +50,7 @@ namespace OpenAI_API.Files
 		/// <returns></returns>
 		public async Task<string> GetFileContentAsStringAsync(string fileId)
 		{
-			return await HttpGetContent<File>($"{Url}/{fileId}/content");
+			return await HttpGetContent($"{Url}/{fileId}/content");
 		}
 
 		/// <summary>
@@ -75,7 +71,6 @@ namespace OpenAI_API.Files
 		/// <param name="purpose">The intendend purpose of the uploaded documents. Use "fine-tune" for Fine-tuning. This allows us to validate the format of the uploaded file.</param>
 		public async Task<File> UploadFileAsync(string filePath, string purpose = "fine-tune")
 		{
-			HttpClient client = GetClient();
 			var content = new MultipartFormDataContent
 			{
 				{ new StringContent(purpose), "purpose" },

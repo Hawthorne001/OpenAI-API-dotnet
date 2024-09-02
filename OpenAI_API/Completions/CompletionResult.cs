@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+using OpenAI_API.Embedding;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
-namespace OpenAI_API
+namespace OpenAI_API.Completions
 {
 	/// <summary>
 	/// Represents a completion choice returned by the Completion API.  
@@ -46,6 +43,18 @@ namespace OpenAI_API
 	}
 
 	/// <summary>
+	/// API usage as reported by the OpenAI API for this request
+	/// </summary>
+	public class CompletionUsage : Usage
+	{
+		/// <summary>
+		/// How many tokens are in the completion(s)
+		/// </summary>
+		[JsonProperty("completion_tokens")]
+		public short CompletionTokens { get; set; }
+	}
+
+	/// <summary>
 	/// Represents a result from calling the Completion API
 	/// </summary>
 	public class CompletionResult : ApiResultBase
@@ -62,6 +71,11 @@ namespace OpenAI_API
 		[JsonProperty("choices")]
 		public List<Choice> Completions { get; set; }
 
+		/// <summary>
+		/// API token usage as reported by the OpenAI API for this request
+		/// </summary>
+		[JsonProperty("usage")]
+		public CompletionUsage Usage { get; set; }
 
 		/// <summary>
 		/// Gets the text of the first completion, representing the main result
@@ -82,7 +96,7 @@ namespace OpenAI_API
 		public List<string> Tokens { get; set; }
 
 		[JsonProperty("token_logprobs")]
-		public List<double> TokenLogprobs { get; set; }
+		public List<double?> TokenLogprobs { get; set; }
 
 		[JsonProperty("top_logprobs")]
 		public IList<IDictionary<string, double>> TopLogprobs { get; set; }
